@@ -14,6 +14,8 @@
 
 from __future__ import absolute_import
 
+from collections.abc import MutableMapping
+
 from opentracing import (
     InvalidCarrierException,
     SpanContextCorruptedException,
@@ -54,8 +56,8 @@ class TextCodec(Codec):
         self.prefix_length = len(baggage_header_prefix)
 
     def inject(self, span_context, carrier):
-        if not isinstance(carrier, dict):
-            raise InvalidCarrierException('carrier not a collection')
+        if not isinstance(carrier, MutableMapping):
+            raise InvalidCarrierException('carrier not a MutableMapping')
         # Note: we do not url-encode the trace ID because the ':' separator
         # is not a problem for HTTP header values
         carrier[self.trace_id_header] = span_context_to_string(
